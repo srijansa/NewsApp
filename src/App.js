@@ -6,7 +6,6 @@ export default function App() {
       <NavBar/>
       <div className="container">
         <News/>
-        
       </div>
     </div>
   )
