@@ -1,8 +1,8 @@
 import React from "react";
 
-const NewsItem = React.memo(({ title, description, imageUrl, newsUrl }) => {
+const NewsItem = React.memo(({ title, description, imageUrl, newsUrl, theme }) => {
   return (
-    <div className="card" style={{ width: "18rem", marginBottom: "20px" }}>
+    <div className={`card ${theme}`} style={{ width: "18rem", marginBottom: "20px" }}>
       <img src={imageUrl} className="card-img-top" alt="News" />
       <div className="card-body">
         <h5 className="card-title">{title}</h5>

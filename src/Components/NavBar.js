@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 
-const NavBar = ({ onSearch }) => {
+const NavBar = ({ onSearch, onThemeToggle, theme }) => {
   const [searchInput, setSearchInput] = useState("");
-
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
     onSearch(e.target.value); 
   };
 
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow">
+    <nav className={`navbar navbar-expand-lg navbar-${theme} bg-${theme} shadow`}>
       <div className="container-fluid">
         <a className="navbar-brand fw-bold" href="/">Crypto News</a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -23,7 +23,6 @@ const NavBar = ({ onSearch }) => {
             </li>
           </ul>
 
-          {/* Search Bar */}
           <input
             type="text"
             className="form-control me-2"
@@ -32,6 +31,10 @@ const NavBar = ({ onSearch }) => {
             onChange={handleSearchChange}
             style={{ width: "250px" }}
           />
+      
+           <button className="btn btn-outline-light ms-2" onClick={onThemeToggle}>
+            {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+          </button>
         </div>
       </div>
     </nav>

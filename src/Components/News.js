@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import NewsItem from "./NewsItem";
 
-const News = ({ searchQuery }) => {
+const News = ({ searchQuery, theme }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -44,7 +44,7 @@ const News = ({ searchQuery }) => {
   
 
   return (
-    <div className="container mt-3">
+    <div className={`news-container mt-3 ${theme}`}>
       {error ? (
         <div className="alert alert-danger">{error}</div>
       ) : loading ? (
@@ -60,6 +60,7 @@ const News = ({ searchQuery }) => {
                 description={article.body ? article.body.slice(0, 100) : "No description available"}
                 imageUrl={article.imageurl || "https://via.placeholder.com/150"}
                 newsUrl={article.url}
+                theme={theme}
               />
             </div>
           ))}
