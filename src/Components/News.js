@@ -1,66 +1,62 @@
-import React, {useState, useEffect, useMemo, useCallback} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import NewsItem from "./NewsItem";
 
-const News = () => {
+const News = ({ searchQuery }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [theme, setTheme] = useState("light");
-  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchNews() {
-      const response = await fetch(`https://api.coingecko.com/api/v3/news?page=${page}`);
-      const data = await response.json();
-      setArticles(prevArticles => [...prevArticles, ...data.data]);
-      setLoading(false);
-    }
-    fetchNews();
-  }, [page]);
+      try {
+        const response = await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN");
   
-  const filteredArticles = useMemo(() => {
-    return articles.filter(article =>
-      article.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [articles, searchQuery]);
-
-  const handleScroll = useCallback(() => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-      setPage(prevPage => prevPage + 1);
+        if (!response.ok) throw new Error(`Error ${response.status}: Failed to fetch news`);
+  
+        const data = await response.json();
+        // console.log("API Response:", data); 
+  
+        if (!data.Data || !Array.isArray(data.Data)) {
+          throw new Error("Invalid API response structure");
+        }
+  
+        setArticles(data.Data); 
+      } catch (error) {
+        console.error("Fetch error:", error.message);
+      }
     }
+  
+    fetchNews();
   }, []);
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll); // Cleanup
-  }, [handleScroll]);
+  const filteredArticles = useMemo(() => {
+    if (!Array.isArray(articles)) return [];
+    const result = articles.filter(article =>
+      article.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    console.log("Filtered Articles:", result); 
+    return result;
+  }, [articles, searchQuery]);
+  
+  
 
   return (
-    <div className={`container ${theme}`}>
-      <div className="d-flex justify-content-between my-3">
-        <h2>Latest Crypto News</h2>
-        <button className="btn btn-secondary" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-          Toggle {theme === "light" ? "Dark" : "Light"} Mode
-        </button>
-      </div>
-
-      <input
-        type="text"
-        className="form-control mb-3"
-        placeholder="Search news..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-
-      {loading ? <h4>Loading...</h4> : (
+    <div className="container mt-3">
+      {error ? (
+        <div className="alert alert-danger">{error}</div>
+      ) : loading ? (
+        <h4 className="text-center">Loading...</h4>
+      ) : articles.length === 0 ? (
+        <h4 className="text-center">No news articles found.</h4> 
+      ) : (
         <div className="row">
           {filteredArticles.map((article, index) => (
             <div className="col-md-4" key={index}>
               <NewsItem
-                title={article.title || "No Title Available"}
-                description={article.content ? article.content.slice(0, 100) : "No description available"}
-                imageUrl={article.thumb_2x || "https://via.placeholder.com/150"}
-                newsUrl={article.url || "/"}
+                title={article.title || "No Title"}
+                description={article.body ? article.body.slice(0, 100) : "No description available"}
+                imageUrl={article.imageurl || "https://via.placeholder.com/150"}
+                newsUrl={article.url}
               />
             </div>
           ))}

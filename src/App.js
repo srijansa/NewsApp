@@ -1,14 +1,16 @@
-import React from 'react'
-import NavBar from './Components/NavBar'
-import News from './Components/News'
+import React, { useState } from "react"; // ✅ Fix: Import useState
+import NavBar from "./Components/NavBar";
+import News from "./Components/News";
 
-export default function App() {
+const App = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <div>
-      <NavBar/>
-      <div className="container">
-        <News/>
-      </div>
+      <NavBar onSearch={setSearchQuery} />
+      <News searchQuery={searchQuery} />
     </div>
-  )
-}
+  );
+};
+
+export default App;
