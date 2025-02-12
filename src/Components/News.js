@@ -3,7 +3,7 @@ import NewsItem from "./NewsItem";
 
 const News = ({ searchQuery }) => {
   const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -23,6 +23,9 @@ const News = ({ searchQuery }) => {
         setArticles(data.Data); 
       } catch (error) {
         console.error("Fetch error:", error.message);
+        setError(error.message)
+      } finally {
+        setLoading(false);
       }
     }
   
